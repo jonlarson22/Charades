@@ -1,9 +1,7 @@
 {
-  "easy": [
-    { "type": "image", "content": "images/balloons.png", "answer": "Balloons" },
-    { "type": "image", "content": "images/olaf.png", "answer": "Olaf" },
-    { "type": "image", "content": "images/toy_story.png", "answer": "Toy Story" }
-  ],
+  "easy": {
+    "totalImages": 3
+  },
   "medium": [
     { "type": "text", "content": "Brushing Teeth" },
     { "type": "text", "content": "Driving a Car" },
