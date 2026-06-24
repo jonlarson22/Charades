@@ -1,92 +1,159 @@
+:root {
+  --primary-color: #3b82f6;
+  --bg-color: #f3f4f6;
+  --card-bg: #ffffff;
+  --text-main: #1f2937;
+  --text-muted: #9ca3af;
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  background-color: #f0f4f8;
+  background-color: var(--bg-color);
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  /* Prevents pull-to-refresh on mobile */
+  overscroll-behavior-y: contain; 
 }
 
-.game-container {
+.app-container {
   width: 100%;
-  max-width: 500px;
+  max-width: 480px;
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: white;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background-color: var(--bg-color);
 }
 
-header {
-  padding: 20px;
+/* Header & Tabs */
+.app-header {
+  padding: 24px 20px 16px;
   text-align: center;
-  background: #4a90e2;
-  color: white;
+}
+
+.app-header h1 {
+  font-size: 2rem;
+  color: var(--text-main);
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
 }
 
 .tabs {
   display: flex;
-  margin-top: 15px;
-  gap: 10px;
+  gap: 8px;
+  background: #e5e7eb;
+  padding: 6px;
+  border-radius: 16px;
 }
 
 .tab-btn {
   flex: 1;
-  padding: 10px;
+  padding: 12px 8px;
   border: none;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  font-weight: bold;
-  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 12px;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .tab-btn.active {
-  background: white;
-  color: #4a90e2;
+  background: var(--card-bg);
+  color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
 }
 
-.card-display {
+/* The Flashcard Stage */
+.card-stage {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
-  padding: 30px;
-  text-align: center;
-}
-
-.game-card {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #333;
-}
-
-.game-image {
-  max-width: 90%;
-  max-height: 300px;
-  object-fit: contain;
-  border-radius: 12px;
-}
-
-footer {
   padding: 20px;
 }
 
-.action-btn {
+.flashcard {
   width: 100%;
-  padding: 18px;
+  aspect-ratio: 3 / 4; /* Keeps a consistent card shape */
+  max-height: 400px;
+  background: var(--card-bg);
+  border-radius: 24px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.card-content.fade-out {
+  opacity: 0;
+}
+
+/* Dynamic Card Content Styling */
+.game-word {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.game-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* Ensures the image never stretches and stays inside the card */
+  border-radius: 8px;
+}
+
+.placeholder-text {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Footer & Action Button */
+.app-footer {
+  padding: 20px 24px 32px;
+}
+
+.primary-btn {
+  width: 100%;
+  padding: 20px;
   font-size: 1.25rem;
-  font-weight: bold;
-  background: #2ecc71;
+  font-weight: 700;
+  background-color: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 16px;
   cursor: pointer;
+  box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.39);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.primary-btn:active {
+  transform: scale(0.98);
+  box-shadow: none;
 }
