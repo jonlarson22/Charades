@@ -1,8 +1,8 @@
 {
   "easy": [
-    { "type": "image", "content": "https://placehold.co/400x400/png?text=Cat", "answer": "Cat" },
-    { "type": "image", "content": "https://placehold.co/400x400/png?text=Dog", "answer": "Dog" },
-    { "type": "image", "content": "https://placehold.co/400x400/png?text=Airplane", "answer": "Airplane" }
+    { "type": "image", "content": "images/balloons.png", "answer": "Balloons" },
+    { "type": "image", "content": "images/olaf.png", "answer": "Olaf" },
+    { "type": "image", "content": "images/toy_story.png", "answer": "Toy Story" }
   ],
   "medium": [
     { "type": "text", "content": "Brushing Teeth" },
