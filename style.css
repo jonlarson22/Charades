@@ -1,0 +1,92 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  background-color: #f0f4f8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.game-container {
+  width: 100%;
+  max-width: 500px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+header {
+  padding: 20px;
+  text-align: center;
+  background: #4a90e2;
+  color: white;
+}
+
+.tabs {
+  display: flex;
+  margin-top: 15px;
+  gap: 10px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.tab-btn.active {
+  background: white;
+  color: #4a90e2;
+}
+
+.card-display {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 30px;
+  text-align: center;
+}
+
+.game-card {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.game-image {
+  max-width: 90%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+footer {
+  padding: 20px;
+}
+
+.action-btn {
+  width: 100%;
+  padding: 18px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  background: #2ecc71;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
