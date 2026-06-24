@@ -17,33 +17,31 @@ async function loadGameData() {
 
 function drawCard() {
   if (!gameData || !gameData[currentDifficulty]) return;
-  
-  const pool = gameData[currentDifficulty];
-  const item = pool[Math.floor(Math.random() * pool.length)];
 
-  // 1. Fade out current content
-  cardContent.classList.add('fade-out');
+  cardContent.innerHTML = ''; // Clear container
 
-  // 2. Wait for fade, then swap content and fade back in
-  setTimeout(() => {
-    cardContent.innerHTML = ''; // Clear container
+  // Logic for the Toddler Image Mode
+  if (currentDifficulty === 'easy') {
+    const totalImages = gameData.easy.totalImages;
+    // Pick a random number between 1 and totalImages
+    const randomImgNumber = Math.floor(Math.random() * totalImages) + 1;
+    
+    const img = document.createElement('img');
+    img.src = `images/${randomImgNumber}.png`; // Calls 1.png, 2.png, etc.
+    img.alt = 'Charades image';
+    img.className = 'game-image';
+    cardContent.appendChild(img);
+  } 
+  // Logic for the Text Modes
+  else {
+    const pool = gameData[currentDifficulty];
+    const item = pool[Math.floor(Math.random() * pool.length)];
 
-    if (item.type === 'image') {
-      const img = document.createElement('img');
-      img.src = item.content;
-      img.alt = item.answer || 'Charades image';
-      img.className = 'game-image';
-      cardContent.appendChild(img);
-    } else {
-      const textNode = document.createElement('h2');
-      textNode.className = 'game-word';
-      textNode.textContent = item.content;
-      cardContent.appendChild(textNode);
-    }
-
-    // Remove fade class to reveal new content
-    cardContent.classList.remove('fade-out');
-  }, 200); // 200ms matches the CSS transition time
+    const textNode = document.createElement('h2');
+    textNode.className = 'game-word';
+    textNode.textContent = item.content;
+    cardContent.appendChild(textNode);
+  }
 }
 
 // Tab Switching Logic
