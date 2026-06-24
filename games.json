@@ -1,0 +1,17 @@
+{
+  "easy": [
+    { "type": "image", "content": "https://placehold.co/400x400/png?text=Cat", "answer": "Cat" },
+    { "type": "image", "content": "https://placehold.co/400x400/png?text=Dog", "answer": "Dog" },
+    { "type": "image", "content": "https://placehold.co/400x400/png?text=Airplane", "answer": "Airplane" }
+  ],
+  "medium": [
+    { "type": "text", "content": "Brushing Teeth" },
+    { "type": "text", "content": "Driving a Car" },
+    { "type": "text", "content": "Monkey" }
+  ],
+  "hard": [
+    { "type": "text", "content": "Astronaut on the Moon" },
+    { "type": "text", "content": "Baking a Pizza" },
+    { "type": "text", "content": "Rollercoaster" }
+  ]
+}
