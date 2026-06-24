@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Charades</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+  <div class="game-container">
+    <header>
+      <h1>Charades</h1>
+      <div class="tabs">
+        <button class="tab-btn active" data-difficulty="easy">Easy 👶</button>
+        <button class="tab-btn" data-difficulty="medium">Medium</button>
+        <button class="tab-btn" data-difficulty="hard">Hard</button>
+      </div>
+    </header>
+
+    <main class="card-display" id="cardDisplay">
+      <p class="instruction">Tap "Next Card" to start playing!</p>
+    </main>
+
+    <footer>
+      <button id="nextBtn" class="action-btn">Next Card</button>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
