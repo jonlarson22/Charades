@@ -2,7 +2,7 @@ const CACHE_NAME = 'charades-v1';
 const ASSETS = [
   './',
   './index.html',
-  './styles.css',
+  './style.css',
   './app.js',
   './manifest.json',
   './games.json'
