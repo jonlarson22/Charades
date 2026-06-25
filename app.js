@@ -107,7 +107,9 @@ function startTimer() {
       
       buzzerTimeout = setTimeout(() => {
         playBuzzer();
-      }, 1000); 
+      }, 1000);
+      
+      startTimerBtn.disabled = false;
     }
   }, 1000);
 }
@@ -181,6 +183,10 @@ timeSlider.addEventListener('input', (e) => {
   clearTimeout(buzzerTimeout);
   progressBar.style.width = '100%';
   progressBar.classList.remove('warning');
+
+  if (cardContent.querySelector('.game-image, .game-word')) {
+    startTimerBtn.disabled = false;
+  }
 });
 
 startTimerBtn.addEventListener('click', () => {
