@@ -12,6 +12,7 @@ let timeLeft = 60;
 // DOM Elements
 const cardContent = document.getElementById('cardContent');
 const nextBtn = document.getElementById('nextBtn');
+const startTimerBtn = document.getElementById('startTimerBtn');
 const tabs = document.querySelectorAll('.tab-btn');
 const timeSlider = document.getElementById('timeSlider');
 const timeDisplay = document.getElementById('timeDisplay');
@@ -94,6 +95,7 @@ function startTimer() {
 }
 
 // Draw Card & Start Round
+// Draw Card & Start Round
 function drawCard() {
   if (!gameData || !gameData[currentDifficulty]) return;
 
@@ -118,7 +120,15 @@ function drawCard() {
     }
 
     cardContent.classList.remove('fade-out');
-    startTimer(); // Kick off the timer when the card is revealed
+    
+    // Reset timer visuals but DO NOT start the clock yet
+    clearInterval(timerInterval);
+    clearTimeout(buzzerTimeout);
+    progressBar.style.width = '100%';
+    progressBar.classList.remove('warning');
+    
+    // Wake up the Start Timer button!
+    startTimerBtn.disabled = false;
   }, 200);
 }
 
@@ -137,6 +147,8 @@ tabs.forEach(tab => {
       clearTimeout(buzzerTimeout);
       progressBar.style.width = '100%';
       progressBar.classList.remove('warning');
+
+      startTimerBtn.disabled = true; 
     }, 200);
   });
 });
@@ -148,6 +160,11 @@ timeSlider.addEventListener('input', (e) => {
   clearTimeout(buzzerTimeout);
   progressBar.style.width = '100%';
   progressBar.classList.remove('warning');
+});
+
+startTimerBtn.addEventListener('click', () => {
+  startTimerBtn.disabled = true; // Disable it so they can't spam click it
+  startTimer();
 });
 
 nextBtn.addEventListener('click', drawCard);
