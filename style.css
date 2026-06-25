@@ -29,7 +29,7 @@ body {
 
 .app-container {
   width: 100%;
-  max-width: 480px;
+  max-width: 700px;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -90,10 +90,10 @@ body {
 
 .flashcard {
   width: 100%;
-  aspect-ratio: 4 / 3; /* Wide card format */
-  max-height: 450px;
+  flex: 1; /* THE FIX: Tells the card to stretch vertically */
+  min-height: 300px; /* Prevents it from getting too squished on tiny screens */
   background: var(--card-bg);
-  border-radius: 30px; /* Big friendly corners */
+  border-radius: 30px; 
   border: 4px solid white;
   box-shadow: var(--shadow-soft);
   padding: 20px;
