@@ -19,6 +19,13 @@
       </nav>
       
       <div class="timer-settings">
+        <div class="lightning-toggle-container">
+            <label for="lightningToggle">⚡ Lightning Round</label>
+            <label class="switch">
+              <input type="checkbox" id="lightningToggle">
+              <span class="slider round"></span>
+            </label>
+          </div>
         <label for="timeSlider">Timer: <span id="timeDisplay">60</span>s</label>
         <input type="range" id="timeSlider" min="15" max="120" step="15" value="60">
       </div>
@@ -33,12 +40,19 @@
       <div class="progress-container">
         <div class="progress-bar" id="progressBar"></div>
       </div>
+            <div id="scoreDisplay" class="score-display hidden">
+        Score: <span id="scoreValue">0</span>
+      </div>
     </section>
 
     <footer class="app-footer">
       <div class="action-buttons">
         <button id="startTimerBtn" class="secondary-btn" disabled>Start Timer</button>
         <button id="nextBtn" class="primary-btn">Next Card</button>
+        <div id="lightningControls" class="lightning-controls hidden">
+            <button id="skipBtn" class="action-btn skip-btn">Skip</button>
+            <button id="correctBtn" class="action-btn correct-btn">Correct!</button>
+          </div>
       </div>
     </footer>
   </main>
