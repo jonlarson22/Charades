@@ -16,8 +16,8 @@ const timeSlider = document.getElementById('timeSlider');
 const timeDisplay = document.getElementById('timeDisplay');
 const progressBar = document.getElementById('progressBar');
 
-// Audio Context (must be initialized after user clicks)
-let audioCtx;
+// Audio Setup
+const buzzerSound = new Audio('audio/buzzer.mp3');
 
 async function loadGameData() {
   try {
@@ -54,25 +54,9 @@ function getNextCard() {
   return shuffledBags[currentDifficulty].pop();
 }
 
-// Synth Buzzer Sound (No external audio file needed!)
 function playBuzzer() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  
-  const oscillator = audioCtx.createOscillator();
-  const gainNode = audioCtx.createGain();
-  
-  oscillator.connect(gainNode);
-  gainNode.connect(audioCtx.destination);
-  
-  oscillator.type = 'sawtooth'; // Gives it that harsh "game show buzzer" vibe
-  oscillator.frequency.setValueAtTime(150, audioCtx.currentTime); // Low pitch
-  
-  // Fade out slightly over 1 second
-  gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
-  gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1);
-  
-  oscillator.start();
-  oscillator.stop(audioCtx.currentTime + 1);
+  buzzerSound.currentTime = 0; // Rewinds the track in case it's played twice in a row
+  buzzerSound.play().catch(err => console.log('Audio blocked by browser:', err));
 }
 
 // Timer Logic
@@ -105,10 +89,6 @@ function startTimer() {
 // Draw Card & Start Round
 function drawCard() {
   if (!gameData || !gameData[currentDifficulty]) return;
-  
-  // Initialize audio context on first user click to bypass browser auto-play blocks
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  if (audioCtx.state === 'suspended') audioCtx.resume();
 
   const item = getNextCard();
 
