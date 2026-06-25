@@ -27,7 +27,7 @@ const correctBtn = document.getElementById('correctBtn');
 const skipBtn = document.getElementById('skipBtn');
 const cancelBtn = document.getElementById('cancelBtn');
 
-cancelBtn.addEventListener('click', () => {
+ccancelBtn.addEventListener('click', () => {
   clearInterval(timerInterval);
   clearTimeout(buzzerTimeout);
 
@@ -35,9 +35,14 @@ cancelBtn.addEventListener('click', () => {
   
   // Reset UI back to default
   lightningControls.classList.add('hidden');
-  nextBtn.classList.remove('hidden');
-  scoreDisplay.classList.add('hidden');
+  cancelBtn.classList.add('hidden');
+  
+  // Bring back the main buttons
+  startTimerBtn.classList.remove('hidden');
   startTimerBtn.disabled = false;
+  nextBtn.classList.remove('hidden');
+  
+  scoreDisplay.classList.add('hidden');
   progressBar.style.width = '100%'; 
 });
 
@@ -95,42 +100,46 @@ function startTimer() {
   progressBar.style.width = '100%';
   progressBar.classList.remove('warning');
 
-  // --- LIGHTNING ROUND SETUP ---
+  // --- UI TOGGLES FOR ACTIVE PLAY ---
+  startTimerBtn.classList.add('hidden'); // Hide Start Timer
+  nextBtn.classList.add('hidden');       // Hide Next Card
+  cancelBtn.classList.remove('hidden');  // Show End Round
+
   if (isLightningRound) {
     currentScore = 0;
     scoreValue.textContent = currentScore;
     scoreDisplay.classList.remove('hidden');
-    nextBtn.classList.add('hidden'); // Hide normal Draw Card button
     lightningControls.classList.remove('hidden'); // Show Correct/Skip
   }
 
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        const percentage = (timeLeft / currentDuration) * 100;
-        progressBar.style.width = `${percentage}%`;
-    
-        if (percentage <= 25) {
-          progressBar.classList.add('warning');
-        }
-    
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          
-          // Everything inside this setTimeout waits 1 second together
-          buzzerTimeout = setTimeout(() => {
-            playBuzzer();
-            document.body.classList.remove('game-active');
-            
-            if (isLightningRound) {
-              lightningControls.classList.add('hidden');
-              nextBtn.classList.remove('hidden');
-            }
-            
-            startTimerBtn.disabled = false;
-          }, 1000); 
-        }
-      }, 1000);
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    const percentage = (timeLeft / currentDuration) * 100;
+    progressBar.style.width = `${percentage}%`;
+  
+    if (percentage <= 25) {
+      progressBar.classList.add('warning');
     }
+  
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      
+      buzzerTimeout = setTimeout(() => {
+        playBuzzer();
+        document.body.classList.remove('game-active');
+        
+        // Reset UI completely after time runs out
+        if (isLightningRound) {
+          lightningControls.classList.add('hidden');
+        }
+        cancelBtn.classList.add('hidden');
+        nextBtn.classList.remove('hidden');
+        startTimerBtn.classList.remove('hidden');
+        startTimerBtn.disabled = false;
+      }, 1000); 
+    }
+  }, 1000);
+}
 
 // Draw Card & Start Round
 function drawCard(keepTimerRunning = false) {
@@ -156,8 +165,6 @@ function drawCard(keepTimerRunning = false) {
     }
 
     cardContent.classList.remove('fade-out');
-
-    startTimerBtn.disabled = false;
     
     // ONLY reset the timer and buttons if we are NOT in the middle of a Lightning Round
     if (!keepTimerRunning) {
@@ -166,12 +173,15 @@ function drawCard(keepTimerRunning = false) {
       document.body.classList.remove('game-active');
       progressBar.style.width = '100%';
       progressBar.classList.remove('warning');
-      startTimerBtn.disabled = false;
       
-      // Hide lightning stats if they manually reset the card
+      // Reset Button States for a fresh card
+      startTimerBtn.classList.remove('hidden');
+      startTimerBtn.disabled = false;
+      nextBtn.classList.remove('hidden');
+      
       scoreDisplay.classList.add('hidden');
       lightningControls.classList.add('hidden');
-      nextBtn.classList.remove('hidden');
+      cancelBtn.classList.add('hidden');
     }
   }, 200);
 }
