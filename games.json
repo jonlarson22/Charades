@@ -3,13 +3,15 @@
     "totalImages": 3
   },
   "medium": [
-    { "type": "text", "content": "Brushing Teeth" },
-    { "type": "text", "content": "Driving a Car" },
-    { "type": "text", "content": "Monkey" }
+    "Brushing Teeth",
+    "Driving a Car",
+    "Monkey",
+    "Eating Spaghetti",
+    "Playing Guitar"
   ],
   "hard": [
-    { "type": "text", "content": "Astronaut on the Moon" },
-    { "type": "text", "content": "Baking a Pizza" },
-    { "type": "text", "content": "Rollercoaster" }
+    "Astronaut on the Moon",
+    "Baking a Pizza",
+    "Riding a Rollercoaster"
   ]
 }
