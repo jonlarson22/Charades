@@ -244,3 +244,106 @@ input[type=range] {
 .progress-bar.warning {
   background: var(--primary);
 }
+
+/* --- LIGHTNING ROUND STYLES --- */
+
+/* Utility Class */
+.hidden {
+  display: none !important;
+}
+
+/* Toggle Switch */
+.lightning-toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 15px;
+  font-weight: 800;
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+}
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+input:checked + .slider {
+  background-color: var(--primary);
+}
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+/* Score Display */
+.score-display {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  margin-top: 15px;
+}
+.score-display span {
+  color: var(--primary);
+  font-size: 2.2rem;
+  margin-left: 5px;
+}
+
+/* Correct & Skip Buttons */
+.lightning-controls {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+}
+.action-btn {
+  flex: 1;
+  padding: 20px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.correct-btn {
+  background-color: #2ED573;
+  box-shadow: 0 6px 0px #21A055;
+}
+.correct-btn:active {
+  transform: translateY(6px);
+  box-shadow: 0 0px 0px #21A055;
+}
+.skip-btn {
+  background-color: #FFA502;
+  box-shadow: 0 6px 0px #C98200;
+}
+.skip-btn:active {
+  transform: translateY(6px);
+  box-shadow: 0 0px 0px #C98200;
+}
