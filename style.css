@@ -156,6 +156,41 @@ body {
   box-shadow: 0 0px 0px #E84118;
 }
 
+/* Action Buttons Layout */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Secondary 3D Button (Start Timer) */
+.secondary-btn {
+  width: 100%;
+  padding: 20px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  background-color: var(--secondary);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 6px 0px #38A39B; /* Darker teal for the 3D effect */
+  transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.3s ease;
+}
+
+.secondary-btn:active:not(:disabled) {
+  transform: translateY(6px);
+  box-shadow: 0 0px 0px #38A39B;
+}
+
+/* Disabled State for Start Timer */
+.secondary-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: translateY(6px); /* Keeps it "pressed down" visually */
+  box-shadow: 0 0px 0px #38A39B;
+}
+
 /* Timer Settings */
 .timer-settings {
   margin-top: 20px;
