@@ -5,6 +5,7 @@ let shuffledBags = { easy: [], medium: [], hard: [] };
 
 // Timer State
 let timerInterval;
+let buzzerTimeout;
 let currentDuration = 60;
 let timeLeft = 60;
 
@@ -62,6 +63,8 @@ function playBuzzer() {
 // Timer Logic
 function startTimer() {
   clearInterval(timerInterval); // Reset any existing timer
+  clearTimeout(buzzerTimeout);  // Reset any pending buzzer
+  
   timeLeft = currentDuration;
   progressBar.style.width = '100%';
   progressBar.classList.remove('warning');
@@ -81,7 +84,11 @@ function startTimer() {
     // Time's Up!
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
-      playBuzzer();
+      
+      // Wait 1 second for the CSS bar to visually slide to 0%
+      buzzerTimeout = setTimeout(() => {
+        playBuzzer();
+      }, 1000); 
     }
   }, 1000);
 }
@@ -127,6 +134,7 @@ tabs.forEach(tab => {
       cardContent.innerHTML = `<p class="placeholder-text">${currentDifficulty.toUpperCase()} mode ready.</p>`;
       cardContent.classList.remove('fade-out');
       clearInterval(timerInterval); // Stop timer on tab switch
+      clearTimeout(buzzerTimeout);
       progressBar.style.width = '100%';
       progressBar.classList.remove('warning');
     }, 200);
@@ -137,6 +145,7 @@ timeSlider.addEventListener('input', (e) => {
   currentDuration = parseInt(e.target.value);
   timeDisplay.textContent = currentDuration;
   clearInterval(timerInterval); // Stop active timer if they change the slider
+  clearTimeout(buzzerTimeout);
   progressBar.style.width = '100%';
   progressBar.classList.remove('warning');
 });
