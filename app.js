@@ -27,7 +27,7 @@ const correctBtn = document.getElementById('correctBtn');
 const skipBtn = document.getElementById('skipBtn');
 const cancelBtn = document.getElementById('cancelBtn');
 
-ccancelBtn.addEventListener('click', () => {
+cancelBtn.addEventListener('click', () => {
   clearInterval(timerInterval);
   clearTimeout(buzzerTimeout);
 
