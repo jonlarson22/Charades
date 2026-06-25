@@ -23,7 +23,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
   overscroll-behavior-y: contain;
 }
 
@@ -361,4 +362,9 @@ input:checked + .slider:before {
 .cancel-btn:active {
   transform: translateY(6px);
   box-shadow: 0 0px 0px #57606f;
+}
+
+/* --- GAMEPLAY STATE --- */
+body.game-active .setup-only {
+  display: none !important;
 }
