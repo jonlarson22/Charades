@@ -347,3 +347,12 @@ input:checked + .slider:before {
   transform: translateY(6px);
   box-shadow: 0 0px 0px #C98200;
 }
+
+.cancel-btn {
+  background-color: #747d8c;
+  box-shadow: 0 6px 0px #57606f;
+}
+.cancel-btn:active {
+  transform: translateY(6px);
+  box-shadow: 0 0px 0px #57606f;
+}
