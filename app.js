@@ -25,6 +25,19 @@ const scoreValue = document.getElementById('scoreValue');
 const lightningControls = document.getElementById('lightningControls');
 const correctBtn = document.getElementById('correctBtn');
 const skipBtn = document.getElementById('skipBtn');
+const cancelBtn = document.getElementById('cancelBtn');
+
+cancelBtn.addEventListener('click', () => {
+  clearInterval(timerInterval);
+  clearTimeout(buzzerTimeout);
+  
+  // Reset UI back to default
+  lightningControls.classList.add('hidden');
+  nextBtn.classList.remove('hidden');
+  scoreDisplay.classList.add('hidden');
+  startTimerBtn.disabled = false;
+  progressBar.style.width = '100%'; 
+});
 
 // Audio Setup
 const buzzerSound = new Audio('audio/buzzer.mp3');
@@ -97,21 +110,19 @@ function startTimer() {
     }
 
     if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      
-      // --- LIGHTNING ROUND CLEANUP ---
-      if (isLightningRound) {
-        lightningControls.classList.add('hidden');
-        nextBtn.classList.remove('hidden');
-      }
-      
-      buzzerTimeout = setTimeout(() => {
-        playBuzzer();
-      }, 1000);
-      
-      startTimerBtn.disabled = false;
+  clearInterval(timerInterval);
+  
+  // Everything inside this setTimeout waits 1 second together
+  buzzerTimeout = setTimeout(() => {
+    playBuzzer();
+    
+    if (isLightningRound) {
+      lightningControls.classList.add('hidden');
+      nextBtn.classList.remove('hidden');
     }
-  }, 1000);
+    
+    startTimerBtn.disabled = false;
+  }, 1000); 
 }
 
 // Draw Card & Start Round
