@@ -2,6 +2,8 @@
 let gameData = null;
 let currentDifficulty = 'easy';
 let shuffledBags = { easy: [], medium: [], hard: [] };
+let isLightningRound = false;
+let currentScore = 0;
 
 // Timer State
 let timerInterval;
@@ -17,6 +19,12 @@ const tabs = document.querySelectorAll('.tab-btn');
 const timeSlider = document.getElementById('timeSlider');
 const timeDisplay = document.getElementById('timeDisplay');
 const progressBar = document.getElementById('progressBar');
+const lightningToggle = document.getElementById('lightningToggle');
+const scoreDisplay = document.getElementById('scoreDisplay');
+const scoreValue = document.getElementById('scoreValue');
+const lightningControls = document.getElementById('lightningControls');
+const correctBtn = document.getElementById('correctBtn');
+const skipBtn = document.getElementById('skipBtn');
 
 // Audio Setup
 const buzzerSound = new Audio('audio/buzzer.mp3');
@@ -63,30 +71,40 @@ function playBuzzer() {
 
 // Timer Logic
 function startTimer() {
-  clearInterval(timerInterval); // Reset any existing timer
-  clearTimeout(buzzerTimeout);  // Reset any pending buzzer
+  clearInterval(timerInterval); 
+  clearTimeout(buzzerTimeout);  
   
   timeLeft = currentDuration;
   progressBar.style.width = '100%';
   progressBar.classList.remove('warning');
 
+  // --- LIGHTNING ROUND SETUP ---
+  if (isLightningRound) {
+    currentScore = 0;
+    scoreValue.textContent = currentScore;
+    scoreDisplay.classList.remove('hidden');
+    nextBtn.classList.add('hidden'); // Hide normal Draw Card button
+    lightningControls.classList.remove('hidden'); // Show Correct/Skip
+  }
+
   timerInterval = setInterval(() => {
     timeLeft--;
-    
-    // Update visual bar width
     const percentage = (timeLeft / currentDuration) * 100;
     progressBar.style.width = `${percentage}%`;
 
-    // Turn bar red at 25% remaining
     if (percentage <= 25) {
       progressBar.classList.add('warning');
     }
 
-    // Time's Up!
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
       
-      // Wait 1 second for the CSS bar to visually slide to 0%
+      // --- LIGHTNING ROUND CLEANUP ---
+      if (isLightningRound) {
+        lightningControls.classList.add('hidden');
+        nextBtn.classList.remove('hidden');
+      }
+      
       buzzerTimeout = setTimeout(() => {
         playBuzzer();
       }, 1000); 
@@ -95,12 +113,10 @@ function startTimer() {
 }
 
 // Draw Card & Start Round
-// Draw Card & Start Round
-function drawCard() {
+function drawCard(keepTimerRunning = false) {
   if (!gameData || !gameData[currentDifficulty]) return;
 
   const item = getNextCard();
-
   cardContent.classList.add('fade-out');
 
   setTimeout(() => {
@@ -121,14 +137,19 @@ function drawCard() {
 
     cardContent.classList.remove('fade-out');
     
-    // Reset timer visuals but DO NOT start the clock yet
-    clearInterval(timerInterval);
-    clearTimeout(buzzerTimeout);
-    progressBar.style.width = '100%';
-    progressBar.classList.remove('warning');
-    
-    // Wake up the Start Timer button!
-    startTimerBtn.disabled = false;
+    // ONLY reset the timer and buttons if we are NOT in the middle of a Lightning Round
+    if (!keepTimerRunning) {
+      clearInterval(timerInterval);
+      clearTimeout(buzzerTimeout);
+      progressBar.style.width = '100%';
+      progressBar.classList.remove('warning');
+      startTimerBtn.disabled = false;
+      
+      // Hide lightning stats if they manually reset the card
+      scoreDisplay.classList.add('hidden');
+      lightningControls.classList.add('hidden');
+      nextBtn.classList.remove('hidden');
+    }
   }, 200);
 }
 
@@ -168,6 +189,27 @@ startTimerBtn.addEventListener('click', () => {
 });
 
 nextBtn.addEventListener('click', drawCard);
+
+// Lightning Round Event Listeners
+lightningToggle.addEventListener('change', (e) => {
+  isLightningRound = e.target.checked;
+  if (!isLightningRound) {
+    // Reset UI if they turn it off mid-game
+    scoreDisplay.classList.add('hidden');
+    lightningControls.classList.add('hidden');
+    nextBtn.classList.remove('hidden');
+  }
+});
+
+correctBtn.addEventListener('click', () => {
+  currentScore++;
+  scoreValue.textContent = currentScore;
+  drawCard(true); // Passes "true" so the timer keeps running!
+});
+
+skipBtn.addEventListener('click', () => {
+  drawCard(true); // Passes "true" so the timer keeps running!
+});
 
 window.addEventListener('DOMContentLoaded', async () => {
   await loadGameData();
