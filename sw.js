@@ -1,11 +1,12 @@
-const CACHE_NAME = 'charades-v1.1';
+const CACHE_NAME = 'charades-v1.3';
 const ASSETS = [
   './',
   './index.html',
   './style.css',
   './app.js',
   './manifest.json',
-  './games.json'
+  './games.json',
+  './audio/buzzer.mp3'
 ];
 
 // Install Event: Cache App Shell
