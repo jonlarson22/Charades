@@ -1,57 +1,72 @@
-const CACHE_NAME = 'charades-v1.3';
-const ASSETS = [
-  './',
-  './index.html',
-  './style.css',
-  './app.js',
-  './manifest.json',
-  './games.json',
-  './audio/buzzer.mp3'
-];
+const CACHE_NAME = 'charades-v1.4';
 
-// Install Event: Cache App Shell
+// 1. Install Event: Pre-cache core files AND all images
 self.addEventListener('install', (event) => {
+  self.skipWaiting(); 
+  
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
-    })
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      
+      // Cache the bones of the app
+      await cache.addAll([
+        './',
+        './index.html',
+        './style.css',
+        './app.js',
+        './games.json',
+        './manifest.json',
+        './audio/buzzer.mp3'
+      ]);
+
+      // Fetch games.json to figure out how many images exist
+      try {
+        const response = await fetch('./games.json');
+        const gameData = await response.json();
+        
+        // Ensure totalImages is defined before looping
+        if (gameData && gameData.easy && gameData.easy.totalImages) {
+            const totalImages = gameData.easy.totalImages;
+            const imagePaths = [];
+            
+            for (let i = 1; i <= totalImages; i++) {
+              imagePaths.push(`./images/${i}.png`);
+            }
+            
+            // Cache all images immediately
+            await cache.addAll(imagePaths);
+            console.log('All images pre-cached successfully for offline play!');
+        }
+      } catch (error) {
+        console.error('Failed to pre-cache images:', error);
+      }
+    })()
   );
-  self.skipWaiting();
 });
 
-// Activate Event: Clean up old caches
+// 2. Fetch Event: Serve from cache first, fall back to network
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      // Return the cached version if found, otherwise fetch from the internet
+      return cachedResponse || fetch(event.request);
+    })
+  );
+});
+
+// 3. Activate Event: Clean up old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => {
+    caches.keys().then((cacheNames) => {
       return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            console.log(`Deleting old cache: ${cacheName}`);
+            return caches.delete(cacheName);
           }
         })
       );
     })
   );
-  self.clients.claim();
-});
-
-// Fetch Event: Cache-First Strategy
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).then((networkResponse) => {
-        // Dynamic caching for any new game assets/images hit during gameplay
-        if (event.request.method === 'GET') {
-          return caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, networkResponse.clone());
-            return networkResponse;
-          });
-        }
-        return networkResponse;
-      });
-    })
-  );
+  self.clients.claim(); // Takes control of all open pages immediately
 });
