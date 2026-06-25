@@ -117,10 +117,14 @@ body {
 
 /* Perfect Image Scaling */
 .game-word {
-  font-size: 3.5rem;
+  font-size: clamp(1.8rem, 8vw, 3.5rem); 
   font-weight: 800;
   color: var(--text-main);
   line-height: 1.2;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  width: 100%;
+  padding: 0 10px;
 }
 
 .game-image {
@@ -317,6 +321,7 @@ input:checked + .slider:before {
 /* Correct & Skip Buttons */
 .lightning-controls {
   display: flex;
+  flex-wrap: wrap;
   gap: 15px;
   width: 100%;
 }
@@ -351,6 +356,7 @@ input:checked + .slider:before {
 .cancel-btn {
   background-color: #747d8c;
   box-shadow: 0 6px 0px #57606f;
+  flex-basis: 100%;
 }
 .cancel-btn:active {
   transform: translateY(6px);
