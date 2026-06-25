@@ -100,30 +100,32 @@ function startTimer() {
     lightningControls.classList.remove('hidden'); // Show Correct/Skip
   }
 
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    const percentage = (timeLeft / currentDuration) * 100;
-    progressBar.style.width = `${percentage}%`;
-
-    if (percentage <= 25) {
-      progressBar.classList.add('warning');
-    }
-
-    if (timeLeft <= 0) {
-  clearInterval(timerInterval);
-  
-  // Everything inside this setTimeout waits 1 second together
-  buzzerTimeout = setTimeout(() => {
-    playBuzzer();
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        const percentage = (timeLeft / currentDuration) * 100;
+        progressBar.style.width = `${percentage}%`;
     
-    if (isLightningRound) {
-      lightningControls.classList.add('hidden');
-      nextBtn.classList.remove('hidden');
-    }
+        if (percentage <= 25) {
+          progressBar.classList.add('warning');
+        }
     
-    startTimerBtn.disabled = false;
-  }, 1000); 
-}
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          
+          // Everything inside this setTimeout waits 1 second together
+          buzzerTimeout = setTimeout(() => {
+            playBuzzer();
+            
+            if (isLightningRound) {
+              lightningControls.classList.add('hidden');
+              nextBtn.classList.remove('hidden');
+            }
+            
+            startTimerBtn.disabled = false;
+          }, 1000); 
+        }
+      }, 1000);
+    }
 
 // Draw Card & Start Round
 function drawCard(keepTimerRunning = false) {
