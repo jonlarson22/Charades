@@ -35,11 +35,12 @@ function drawCard() {
   // Logic for the Text Modes
   else {
     const pool = gameData[currentDifficulty];
-    const item = pool[Math.floor(Math.random() * pool.length)];
+    // Grab a random string from the array
+    const selectedWord = pool[Math.floor(Math.random() * pool.length)];
 
     const textNode = document.createElement('h2');
     textNode.className = 'game-word';
-    textNode.textContent = item.content;
+    textNode.textContent = selectedWord; // Directly assign the text
     cardContent.appendChild(textNode);
   }
 }
