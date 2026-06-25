@@ -1,4 +1,4 @@
-const CACHE_NAME = 'charades-v1.4';
+const CACHE_NAME = 'charades-v1.5';
 
 // 1. Install Event: Pre-cache core files AND all images
 self.addEventListener('install', (event) => {
