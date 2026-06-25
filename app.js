@@ -225,7 +225,7 @@ startTimerBtn.addEventListener('click', () => {
   startTimer();
 });
 
-nextBtn.addEventListener('click', drawCard);
+nextBtn.addEventListener('click', () => drawCard());
 
 // Lightning Round Event Listeners
 lightningToggle.addEventListener('change', (e) => {
