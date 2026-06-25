@@ -30,6 +30,8 @@ const cancelBtn = document.getElementById('cancelBtn');
 cancelBtn.addEventListener('click', () => {
   clearInterval(timerInterval);
   clearTimeout(buzzerTimeout);
+
+  document.body.classList.remove('game-active');
   
   // Reset UI back to default
   lightningControls.classList.add('hidden');
@@ -86,6 +88,8 @@ function playBuzzer() {
 function startTimer() {
   clearInterval(timerInterval); 
   clearTimeout(buzzerTimeout);  
+
+  document.body.classList.add('game-active');
   
   timeLeft = currentDuration;
   progressBar.style.width = '100%';
@@ -115,6 +119,7 @@ function startTimer() {
           // Everything inside this setTimeout waits 1 second together
           buzzerTimeout = setTimeout(() => {
             playBuzzer();
+            document.body.classList.remove('game-active');
             
             if (isLightningRound) {
               lightningControls.classList.add('hidden');
@@ -158,6 +163,7 @@ function drawCard(keepTimerRunning = false) {
     if (!keepTimerRunning) {
       clearInterval(timerInterval);
       clearTimeout(buzzerTimeout);
+      document.body.classList.remove('game-active');
       progressBar.style.width = '100%';
       progressBar.classList.remove('warning');
       startTimerBtn.disabled = false;
