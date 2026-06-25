@@ -138,6 +138,8 @@ function drawCard(keepTimerRunning = false) {
     }
 
     cardContent.classList.remove('fade-out');
+
+    startTimerBtn.disabled = false;
     
     // ONLY reset the timer and buttons if we are NOT in the middle of a Lightning Round
     if (!keepTimerRunning) {
