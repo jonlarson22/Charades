@@ -1,13 +1,13 @@
 :root {
-  --primary: #FF6B6B;      /* Bouncy Red/Pink */
-  --secondary: #4ECDC4;    /* Fun Teal */
-  --accent: #FFE66D;       /* Bright Yellow */
-  --bg-color: #F7FFF7;     /* Soft Mint/White Background */
+  --primary: #FF6B6B;
+  --secondary: #4ECDC4;
+  --accent: #FFE66D;
+  --bg-color: #F7FFF7;
   --card-bg: #FFFFFF;
   --text-main: #2F3542;
-  --text-muted: #A4B0BE;
-  --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.08);
-  --shadow-button: 0 6px 0px #E84118; /* 3D Button Effect */
+  --text-muted: #747d8c;
+  --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.06);
+  --shadow-button: 0 5px 0px #E84118;
 }
 
 * {
@@ -24,226 +24,208 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100dvh;
-  overflow-x: hidden;
-  overflow-y: auto; /* Changed from 'hidden' to let it scroll if emergency demands it */
-  overscroll-behavior-y: contain;
+  overflow: hidden;
 }
 
 .app-container {
   width: 100%;
-  max-width: 700px;
-  height: 100dvh; /* Force exactly 1 screen height */
-  max-height: 100dvh; 
+  max-width: 650px;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
 }
 
-/* Header & Modern Pill Tabs */
+/* --- VIEW ROUTER UTILITY --- */
+.view {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  padding: 16px 20px;
+}
+
+.view.active {
+  display: flex;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* --- HEADERS --- */
 .app-header {
-  padding: 30px 20px 10px;
   text-align: center;
+  padding: 10px 0;
 }
 
 .app-header h1 {
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   color: var(--primary);
-  margin-bottom: 20px;
-  text-shadow: 2px 2px 0px rgba(0,0,0,0.05);
 }
 
-.tabs {
-  display: flex;
-  gap: 12px;
-  background: white;
-  padding: 8px;
-  border-radius: 50px; /* Fully rounded pill shape */
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.tab-btn {
-  flex: 1;
-  padding: 14px 10px;
-  border: none;
-  background: transparent;
+.subtitle {
   color: var(--text-muted);
   font-weight: 700;
-  font-size: 1rem;
-  border-radius: 40px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  font-size: 0.95rem;
 }
 
-.tab-btn.active {
-  background: var(--secondary);
-  color: white;
-  box-shadow: 0 4px 10px rgba(78, 205, 196, 0.4);
-}
-
-/* The Flashcard Box */
-.card-stage {
-  flex: 1 1 0%; /* THE FIX: The '0%' tells it to ignore the height of the images and strictly use whatever leftover screen space exists */
+/* --- LOBBY MODE SELECTOR --- */
+.mode-select-grid {
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
+  gap: 12px;
+  margin: 16px 0;
+  flex: 1;
   justify-content: center;
-  align-items: center;
-  padding: clamp(10px, 2vh, 20px);
-  gap: clamp(10px, 3vh, 30px); 
+}
+
+.mode-card {
+  background: white;
+  border: 3px solid transparent;
+  padding: 16px 20px;
+  border-radius: 20px;
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mode-card h3 {
+  color: var(--text-main);
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+}
+
+.mode-card p {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.mode-card.selected {
+  border-color: var(--secondary);
+  background: #f0fdfc;
+  transform: scale(1.02);
+}
+
+/* --- TIMER SLIDER --- */
+.timer-settings {
+  background: white;
+  padding: 12px 20px;
+  border-radius: 16px;
+  box-shadow: var(--shadow-soft);
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.timer-settings label {
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  display: block;
+  margin-bottom: 8px;
+}
+
+#timeDisplay {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+input[type=range] {
   width: 100%;
-  overflow: hidden; /* Prevents tall images from breaking out */
+  accent-color: var(--secondary);
+}
+
+/* --- STAGE HEADER --- */
+.stage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px 12px;
+  min-height: 40px;
+}
+
+.badge {
+  background: #e1f5fe;
+  color: #03a9f4;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.score-badge {
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--text-main);
+}
+
+.score-badge span {
+  color: var(--primary);
+  font-size: 1.4rem;
+  margin-left: 4px;
+}
+
+/* --- CARD STAGE --- */
+.card-stage {
+  flex: 1 1 0%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 0;
 }
 
 .flashcard {
   width: 100%;
-  height: 100%; /* THE FIX: Forces the card to stretch to the exact boundary of the stage */
-  max-height: 100%; 
+  height: 100%;
   background: var(--card-bg);
-  border-radius: 30px; 
+  border-radius: 28px;
   border: 4px solid white;
   box-shadow: var(--shadow-soft);
-  padding: 20px;
+  padding: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden; 
+  overflow: hidden;
 }
 
 .card-content {
   width: 100%;
   height: 100%;
-  min-height: 0; /* THE FIX: Tells Flexbox not to grow past available space */
-  min-width: 0;  /* Prevents wide images from breaking out */
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
 }
 
-/* Perfect Image Scaling */
 .game-word {
-  font-size: clamp(1.8rem, 8vw, 3.5rem); 
+  font-size: clamp(2rem, 8vw, 3.5rem);
   font-weight: 800;
   color: var(--text-main);
-  line-height: 1.2;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  width: 100%;
   padding: 0 10px;
 }
 
 .game-image {
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain; 
-  border-radius: 15px;
+  object-fit: contain;
+  border-radius: 12px;
 }
 
-.placeholder-text {
-  font-size: 1.5rem;
-  color: var(--text-muted);
-  font-weight: 700;
-}
-
-/* Big 3D Play Button */
-.app-footer {
-  padding: clamp(10px, 2vh, 20px) 24px clamp(15px, 4vh, 40px); /* Shaves ~30px off bottom padding */
-}
-
-.primary-btn {
-  width: 100%;
-  padding: 20px;
-  font-size: 1.5rem;
-  font-weight: 800;
-  background-color: var(--primary);
-  color: white;
-  border: none;
-  border-radius: 50px; /* Pill shaped */
-  cursor: pointer;
-  box-shadow: var(--shadow-button);
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
-}
-
-.primary-btn:active {
-  transform: translateY(6px); /* Button pushes down */
-  box-shadow: 0 0px 0px #E84118;
-}
-
-/* Action Buttons Layout */
-.action-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-/* Secondary 3D Button (Start Timer) */
-.secondary-btn {
-  width: 100%;
-  padding: 20px;
-  font-size: 1.5rem;
-  font-weight: 800;
-  background-color: var(--secondary);
-  color: white;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  box-shadow: 0 6px 0px #38A39B; /* Darker teal for the 3D effect */
-  transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.3s ease;
-}
-
-.secondary-btn:active:not(:disabled) {
-  transform: translateY(6px);
-  box-shadow: 0 0px 0px #38A39B;
-}
-
-/* Disabled State for Start Timer */
-.secondary-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: translateY(6px); /* Keeps it "pressed down" visually */
-  box-shadow: 0 0px 0px #38A39B;
-}
-
-/* Timer Settings */
-.timer-settings {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.timer-settings label {
-  font-weight: 700;
-  color: var(--text-muted);
-  font-size: 0.95rem;
-}
-
-#timeDisplay {
-  color: var(--primary);
-  font-weight: 800;
-  font-size: 1.1rem;
-}
-
-input[type=range] {
-  width: 80%;
-  accent-color: var(--secondary); /* Modern native slider color */
-}
-
-/* Progress Bar */
+/* --- PROGRESS BAR --- */
 .progress-container {
   width: 100%;
-  height: 12px;
+  height: 10px;
   background: #e5e7eb;
   border-radius: 10px;
-  margin-top: 20px;
   overflow: hidden;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-  
-  opacity: 0; 
-  pointer-events: none; 
-  transition: opacity 0.3s ease; /* Gives it a smooth fade in/out */
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-/* Add this new rule right below it */
 .progress-container.active {
   opacity: 1;
 }
@@ -252,195 +234,116 @@ input[type=range] {
   height: 100%;
   width: 100%;
   background: var(--secondary);
-  border-radius: 10px;
-  transition: width 1s linear, background-color 0.5s ease;
+  transition: width 1s linear, background-color 0.3s ease;
 }
 
-/* Turns red when time is running out */
 .progress-bar.warning {
   background: var(--primary);
 }
 
-/* --- LIGHTNING ROUND STYLES --- */
-
-/* Utility Class */
-.hidden {
-  display: none !important;
-}
-
-/* Toggle Switch */
-.lightning-toggle-container {
+/* --- BUTTONS & FOOTERS --- */
+.app-footer {
   display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-top: 15px;
-  font-weight: 800;
-  color: var(--primary);
-  font-size: 1.1rem;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
 }
 
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 28px;
-}
-.switch input { 
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
-  border-radius: 34px;
-}
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 20px;
-  width: 20px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  transition: .4s;
-  border-radius: 50%;
-}
-input:checked + .slider {
-  background-color: var(--primary);
-}
-input:checked + .slider:before {
-  transform: translateX(22px);
-}
-
-/* Score Display */
-.score-display {
-  text-align: center;
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--text-muted);
-  margin-top: 15px;
-}
-.score-display span {
-  color: var(--primary);
-  font-size: 2.2rem;
-  margin-left: 5px;
-}
-
-/* Correct & Skip Buttons */
-.lightning-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
+.control-group {
   width: 100%;
 }
-.action-btn {
-  flex: 1;
-  padding: 20px;
-  font-size: 1.5rem;
+
+.primary-btn, .secondary-btn, .action-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 1.25rem;
   font-weight: 800;
   color: white;
   border: none;
   border-radius: 50px;
   cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  transition: transform 0.1s ease;
 }
+
+.primary-btn {
+  background-color: var(--primary);
+  box-shadow: var(--shadow-button);
+}
+
+.secondary-btn {
+  background-color: var(--secondary);
+  box-shadow: 0 5px 0px #38A39B;
+}
+
+.lightning-controls {
+  display: flex;
+  gap: 12px;
+}
+
 .correct-btn {
   background-color: #2ED573;
-  box-shadow: 0 6px 0px #21A055;
+  box-shadow: 0 5px 0px #21A055;
 }
-.correct-btn:active {
-  transform: translateY(6px);
-  box-shadow: 0 0px 0px #21A055;
-}
+
 .skip-btn {
   background-color: #FFA502;
-  box-shadow: 0 6px 0px #C98200;
+  box-shadow: 0 5px 0px #C98200;
 }
-.skip-btn:active {
-  transform: translateY(6px);
-  box-shadow: 0 0px 0px #C98200;
+
+.primary-btn:active, .secondary-btn:active, .action-btn:active {
+  transform: translateY(4px);
+  box-shadow: none !important;
 }
 
 .cancel-btn {
-  background-color: #747d8c;
-  box-shadow: 0 6px 0px #57606f;
-  width: 100%;
-  margin-top: 15px;
-}
-.cancel-btn:active {
-  transform: translateY(6px);
-  box-shadow: 0 0px 0px #57606f;
-}
-
-/* --- GAMEPLAY STATE --- */
-body.game-active .setup-only {
-  display: none !important;
-}
-
-/* 1. Shave 35px off the top header air */
-.app-header {
-  padding: 12px 16px 4px;
-}
-
-.app-header h1 {
-  font-size: 1.8rem;
-  margin-bottom: 8px;
-}
-
-/* 2. Compact the Difficulty Pills */
-.tabs {
-  padding: 4px;
-}
-
-.tab-btn {
-  padding: 8px 10px;
-  font-size: 0.9rem;
-}
-
-/* 3. Pull the Timer & Lightning Switch tighter */
-.timer-settings {
-  margin-top: 10px;
-  gap: 4px;
-}
-
-.lightning-toggle-container {
-  margin-top: 6px;
-  font-size: 0.95rem;
-}
-
-/* 4. Reclaim ~50px of vertical space in the Footer */
-.app-footer {
-  padding: 8px 20px 16px;
-}
-
-.action-buttons {
-  gap: 8px;
-}
-
-.primary-btn, 
-.secondary-btn, 
-.action-btn {
-  padding: 12px 20px;     /* Down from 20px */
-  font-size: 1.15rem;     /* Down from 1.5rem */
-}
-
-.cancel-btn {
-  margin-top: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
   padding: 10px;
   font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
 }
 
-/* 5. Tighten the card stage margins */
-.card-stage {
-  gap: 10px;
-  padding: 8px 16px;
+/* --- RECAP VIEW --- */
+.recap-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.progress-container {
-  margin-top: 8px;
-  height: 8px;
+.recap-box {
+  background: white;
+  padding: 40px 30px;
+  border-radius: 28px;
+  box-shadow: var(--shadow-soft);
+  text-align: center;
+  width: 100%;
+}
+
+.recap-box h2 {
+  font-size: 2.2rem;
+  color: var(--text-main);
+  margin-bottom: 16px;
+}
+
+.recap-score p {
+  color: var(--text-muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+}
+
+.recap-score span {
+  font-size: 4rem;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.recap-footer {
+  gap: 12px;
 }
