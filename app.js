@@ -1,67 +1,80 @@
-// State Management
-let gameData = null;
-let currentDifficulty = 'easy';
-let shuffledBags = { easy: [], medium: [], hard: [] };
-let isLightningRound = false;
-let currentScore = 0;
+// ==========================================
+// 1. GAME DEFINITIONS & STATE
+// ==========================================
+const GAME_MODES = {
+  toddler: {
+    dataKey: 'easy',
+    title: '🐱 Toddler Mode',
+    useTimer: false,
+    isScored: false
+  },
+  classic: {
+    dataKey: 'medium',
+    title: '⭐ Classic Charades',
+    useTimer: true,
+    isScored: false
+  },
+  challenge: {
+    dataKey: 'hard',
+    title: '⚡ Lightning Round',
+    useTimer: true,
+    isScored: true
+  }
+};
 
-// Timer State
-let timerInterval;
-let buzzerTimeout;
+let gameData = null;
+let shuffledBags = { easy: [], medium: [], hard: [] };
+let currentModeKey = 'toddler';
 let currentDuration = 60;
 let timeLeft = 60;
+let currentScore = 0;
+let timerInterval = null;
+let buzzerTimeout = null;
 
-// DOM Elements
-const cardContent = document.getElementById('cardContent');
-const nextBtn = document.getElementById('nextBtn');
-const startTimerBtn = document.getElementById('startTimerBtn');
-const tabs = document.querySelectorAll('.tab-btn');
-const timeSlider = document.getElementById('timeSlider');
-const timeDisplay = document.getElementById('timeDisplay');
-const progressBar = document.getElementById('progressBar');
-const lightningToggle = document.getElementById('lightningToggle');
-const scoreDisplay = document.getElementById('scoreDisplay');
-const scoreValue = document.getElementById('scoreValue');
-const lightningControls = document.getElementById('lightningControls');
-const correctBtn = document.getElementById('correctBtn');
-const skipBtn = document.getElementById('skipBtn');
-const cancelBtn = document.getElementById('cancelBtn');
-
-// <-- NEW (Timer Fix): Helper function to fade the timer bar in and out safely
-function toggleTimerVisibility(show) {
-  const container = document.querySelector('.progress-container');
-  if (container) {
-    if (show) {
-      container.classList.add('active');
-    } else {
-      container.classList.remove('active');
-    }
-  }
-}
-
-cancelBtn.addEventListener('click', () => {
-  clearInterval(timerInterval);
-  clearTimeout(buzzerTimeout);
-
-  document.body.classList.remove('game-active');
-  toggleTimerVisibility(false); // <-- NEW (Timer Fix): Hides bar when round is canceled
-  
-  // Reset UI back to default
-  lightningControls.classList.add('hidden');
-  cancelBtn.classList.add('hidden');
-  
-  // Bring back the main buttons
-  startTimerBtn.classList.remove('hidden');
-  startTimerBtn.disabled = false;
-  nextBtn.classList.remove('hidden');
-  
-  scoreDisplay.classList.add('hidden');
-  progressBar.style.width = '100%'; 
-});
-
-// Audio Setup
 const buzzerSound = new Audio('audio/buzzer.mp3');
 
+// ==========================================
+// 2. DOM ELEMENT DECLARATIONS
+// ==========================================
+const views = document.querySelectorAll('.view');
+const modeCards = document.querySelectorAll('.mode-card');
+const lobbyTimerContainer = document.getElementById('lobbyTimerContainer');
+const timeSlider = document.getElementById('timeSlider');
+const timeDisplay = document.getElementById('timeDisplay');
+const startGameBtn = document.getElementById('startGameBtn');
+
+const stageModeTitle = document.getElementById('stageModeTitle');
+const scoreDisplay = document.getElementById('scoreDisplay');
+const scoreValue = document.getElementById('scoreValue');
+const cardContent = document.getElementById('cardContent');
+const progressContainer = document.querySelector('.progress-container');
+const progressBar = document.getElementById('progressBar');
+
+const controlsPreStart = document.getElementById('controlsPreStart');
+const controlsManual = document.getElementById('controlsManual');
+const controlsLightning = document.getElementById('controlsLightning');
+const startTimerBtn = document.getElementById('startTimerBtn');
+const nextCardBtn = document.getElementById('nextCardBtn');
+const skipBtn = document.getElementById('skipBtn');
+const correctBtn = document.getElementById('correctBtn');
+const exitStageBtn = document.getElementById('exitStageBtn');
+
+const recapScoreContainer = document.getElementById('recapScoreContainer');
+const recapScoreValue = document.getElementById('recapScoreValue');
+const playAgainBtn = document.getElementById('playAgainBtn');
+const changeModeBtn = document.getElementById('changeModeBtn');
+
+// ==========================================
+// 3. CORE ROUTER ENGINE
+// ==========================================
+function setView(viewId) {
+  views.forEach(v => v.classList.remove('active'));
+  document.getElementById(`view-${viewId}`).classList.add('active');
+}
+
+// ==========================================
+// 4. DATA & SHUFFLE BAG LOGIC
+// ==========================================
 async function loadGameData() {
   try {
     const response = await fetch('./games.json');
@@ -72,7 +85,6 @@ async function loadGameData() {
   }
 }
 
-// The "Shuffle Bag" Logic
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -81,92 +93,28 @@ function shuffleArray(array) {
 }
 
 function getNextCard() {
-  // If the bag for this difficulty is empty, refill and reshuffle it!
-  if (shuffledBags[currentDifficulty].length === 0) {
-    if (currentDifficulty === 'easy') {
-      // Creates an array of numbers: [1, 2, 3...]
+  const dataKey = GAME_MODES[currentModeKey].dataKey;
+  
+  if (shuffledBags[dataKey].length === 0) {
+    if (dataKey === 'easy') {
       shuffledBags.easy = Array.from({ length: gameData.easy.totalImages }, (_, i) => i + 1);
     } else {
-      // Copies the text array: ["Monkey", "Driving a Car"...]
-      shuffledBags[currentDifficulty] = [...gameData[currentDifficulty]];
+      shuffledBags[dataKey] = [...gameData[dataKey]];
     }
-    shuffleArray(shuffledBags[currentDifficulty]);
+    shuffleArray(shuffledBags[dataKey]);
   }
-  
-  // Pop the last item off the shuffled array
-  return shuffledBags[currentDifficulty].pop();
+  return shuffledBags[dataKey].pop();
 }
 
-function playBuzzer() {
-  buzzerSound.currentTime = 0; // Rewinds the track in case it's played twice in a row
-  buzzerSound.play().catch(err => console.log('Audio blocked by browser:', err));
-}
-
-// Timer Logic
-function startTimer() {
-  clearInterval(timerInterval); 
-  clearTimeout(buzzerTimeout);  
-
-  document.body.classList.add('game-active');
-  toggleTimerVisibility(true); // <-- NEW (Timer Fix): Shows bar when timer starts
-  
-  timeLeft = currentDuration;
-  progressBar.style.width = '100%';
-  progressBar.classList.remove('warning');
-
-  // --- UI TOGGLES FOR ACTIVE PLAY ---
-  startTimerBtn.classList.add('hidden'); // Hide Start Timer
-  nextBtn.classList.add('hidden');       // Hide Next Card
-  cancelBtn.classList.remove('hidden');  // Show End Round
-
-  if (isLightningRound) {
-    currentScore = 0;
-    scoreValue.textContent = currentScore;
-    scoreDisplay.classList.remove('hidden');
-    lightningControls.classList.remove('hidden'); // Show Correct/Skip
-  }
-
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    const percentage = (timeLeft / currentDuration) * 100;
-    progressBar.style.width = `${percentage}%`;
-  
-    if (percentage <= 25) {
-      progressBar.classList.add('warning');
-    }
-  
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      
-      buzzerTimeout = setTimeout(() => {
-        playBuzzer();
-        document.body.classList.remove('game-active');
-        toggleTimerVisibility(false); // <-- NEW (Timer Fix): Hides bar when time runs out
-        
-        // Reset UI completely after time runs out
-        if (isLightningRound) {
-          lightningControls.classList.add('hidden');
-        }
-        cancelBtn.classList.add('hidden');
-        nextBtn.classList.remove('hidden');
-        startTimerBtn.classList.remove('hidden');
-        startTimerBtn.disabled = false;
-      }, 1000); 
-    }
-  }, 1000);
-}
-
-// Draw Card & Start Round
-function drawCard(keepTimerRunning = false) {
-  if (!gameData || !gameData[currentDifficulty]) return;
-
+function drawCard() {
+  if (!gameData) return;
   const item = getNextCard();
+  const dataKey = GAME_MODES[currentModeKey].dataKey;
+
   cardContent.classList.add('fade-out');
-
   setTimeout(() => {
-    cardContent.innerHTML = ''; 
-
-    if (currentDifficulty === 'easy') {
+    cardContent.innerHTML = '';
+    if (dataKey === 'easy') {
       const img = document.createElement('img');
       img.src = `images/${item}.png`;
       img.alt = 'Charades image';
@@ -178,101 +126,155 @@ function drawCard(keepTimerRunning = false) {
       textNode.textContent = item;
       cardContent.appendChild(textNode);
     }
-
     cardContent.classList.remove('fade-out');
-    
-    // ONLY reset the timer and buttons if we are NOT in the middle of a Lightning Round
-    if (!keepTimerRunning) {
-      clearInterval(timerInterval);
-      clearTimeout(buzzerTimeout);
-      document.body.classList.remove('game-active');
-      toggleTimerVisibility(false); // <-- NEW (Timer Fix): Hides bar on manual card draw
-      
-      progressBar.style.width = '100%';
-      progressBar.classList.remove('warning');
-      
-      // Reset Button States for a fresh card
-      startTimerBtn.classList.remove('hidden');
-      startTimerBtn.disabled = false;
-      nextBtn.classList.remove('hidden');
-      
-      scoreDisplay.classList.add('hidden');
-      lightningControls.classList.add('hidden');
-      cancelBtn.classList.add('hidden');
-    }
-  }, 200);
+  }, 150);
 }
 
-// Event Listeners
-tabs.forEach(tab => {
-  tab.addEventListener('click', (e) => {
-    tabs.forEach(t => t.classList.remove('active'));
-    e.target.classList.add('active');
-    currentDifficulty = e.target.getAttribute('data-difficulty');
-    
-    cardContent.classList.add('fade-out');
-    setTimeout(() => {
-      cardContent.innerHTML = `<p class="placeholder-text">${currentDifficulty.toUpperCase()} mode ready.</p>`;
-      cardContent.classList.remove('fade-out');
-      clearInterval(timerInterval); // Stop timer on tab switch
-      clearTimeout(buzzerTimeout);
-      toggleTimerVisibility(false); // <-- NEW (Timer Fix): Hides bar if they switch tabs mid-game
-      
-      progressBar.style.width = '100%';
-      progressBar.classList.remove('warning');
+// ==========================================
+// 5. VIEW HANDLERS & TIMER ENGINE
+// ==========================================
+function updateLobbyUI() {
+  modeCards.forEach(c => {
+    c.classList.toggle('selected', c.getAttribute('data-mode') === currentModeKey);
+  });
+  
+  const config = GAME_MODES[currentModeKey];
+  if (config.useTimer) {
+    lobbyTimerContainer.classList.remove('hidden');
+  } else {
+    lobbyTimerContainer.classList.add('hidden');
+  }
+}
 
-      startTimerBtn.disabled = true; 
-    }, 200);
+function initStage() {
+  const config = GAME_MODES[currentModeKey];
+  stageModeTitle.textContent = config.title;
+  
+  // Stop any lingering background timers safely
+  clearInterval(timerInterval);
+  clearTimeout(buzzerTimeout);
+  progressContainer.classList.remove('active');
+  progressBar.style.width = '100%';
+  progressBar.classList.remove('warning');
+
+  // Configure Score Badge
+  currentScore = 0;
+  scoreValue.textContent = '0';
+  if (config.isScored) {
+    scoreDisplay.classList.remove('hidden');
+  } else {
+    scoreDisplay.classList.add('hidden');
+  }
+
+  // Hide all dynamic footer controls initially
+  controlsPreStart.classList.add('hidden');
+  controlsManual.classList.add('hidden');
+  controlsLightning.classList.add('hidden');
+
+  drawCard();
+
+  // Branch UI layout based on mode rules
+  if (!config.useTimer) {
+    // Toddler Mode: Immediate access to Next Card
+    controlsManual.classList.remove('hidden');
+    exitStageBtn.textContent = 'Back to Menu';
+  } else {
+    // Classic & Challenge: Prompt user to start the clock
+    controlsPreStart.classList.remove('hidden');
+    exitStageBtn.textContent = 'End Round Early';
+  }
+
+  setView('stage');
+}
+
+function startActiveTimer() {
+  const config = GAME_MODES[currentModeKey];
+  controlsPreStart.classList.add('hidden');
+  
+  if (config.isScored) {
+    controlsLightning.classList.remove('hidden');
+  } else {
+    controlsManual.classList.remove('hidden');
+  }
+
+  timeLeft = currentDuration;
+  progressContainer.classList.add('active');
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    const pct = (timeLeft / currentDuration) * 100;
+    progressBar.style.width = `${pct}%`;
+
+    if (pct <= 25) progressBar.classList.add('warning');
+
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      buzzerTimeout = setTimeout(() => {
+        buzzerSound.currentTime = 0;
+        buzzerSound.play().catch(e => console.log('Audio blocked', e));
+        triggerRecap();
+      }, 1000);
+    }
+  }, 1000);
+}
+
+function triggerRecap() {
+  clearInterval(timerInterval);
+  clearTimeout(buzzerTimeout);
+  progressContainer.classList.remove('active');
+
+  const config = GAME_MODES[currentModeKey];
+  if (config.isScored) {
+    recapScoreValue.textContent = currentScore;
+    recapScoreContainer.classList.remove('hidden');
+  } else {
+    recapScoreContainer.classList.add('hidden');
+  }
+
+  setView('recap');
+}
+
+function abortStage() {
+  clearInterval(timerInterval);
+  clearTimeout(buzzerTimeout);
+  progressContainer.classList.remove('active');
+  setView('lobby');
+}
+
+// ==========================================
+// 6. EVENT LISTENERS
+// ==========================================
+modeCards.forEach(card => {
+  card.addEventListener('click', () => {
+    currentModeKey = card.getAttribute('data-mode');
+    updateLobbyUI();
   });
 });
 
 timeSlider.addEventListener('input', (e) => {
-  currentDuration = parseInt(e.target.value);
+  currentDuration = parseInt(e.target.value, 10);
   timeDisplay.textContent = currentDuration;
-  clearInterval(timerInterval); // Stop active timer if they change the slider
-  clearTimeout(buzzerTimeout);
-  toggleTimerVisibility(false); // <-- NEW (Timer Fix): Hides bar if they adjust time mid-game
-  
-  progressBar.style.width = '100%';
-  progressBar.classList.remove('warning');
-
-  if (cardContent.querySelector('.game-image, .game-word')) {
-    startTimerBtn.disabled = false;
-  }
 });
 
-startTimerBtn.addEventListener('click', () => {
-  startTimerBtn.disabled = true; // Disable it so they can't spam click it
-  startTimer();
-});
+startGameBtn.addEventListener('click', initStage);
+startTimerBtn.addEventListener('click', startActiveTimer);
+nextCardBtn.addEventListener('click', drawCard);
+exitStageBtn.addEventListener('click', abortStage);
 
-nextBtn.addEventListener('click', () => drawCard());
-
-// Lightning Round Event Listeners
-lightningToggle.addEventListener('change', (e) => {
-  isLightningRound = e.target.checked;
-  if (!isLightningRound) {
-    // Reset UI if they turn it off mid-game
-    scoreDisplay.classList.add('hidden');
-    lightningControls.classList.add('hidden');
-    nextBtn.classList.remove('hidden');
-  }
-});
-
+skipBtn.addEventListener('click', drawCard);
 correctBtn.addEventListener('click', () => {
   currentScore++;
   scoreValue.textContent = currentScore;
-  drawCard(true); // Passes "true" so the timer keeps running!
+  drawCard();
 });
 
-skipBtn.addEventListener('click', () => {
-  drawCard(true); // Passes "true" so the timer keeps running!
-});
+playAgainBtn.addEventListener('click', initStage);
+changeModeBtn.addEventListener('click', () => setView('lobby'));
 
 window.addEventListener('DOMContentLoaded', async () => {
+  updateLobbyUI();
   await loadGameData();
-  
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW registration failed', err));
+    navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW fail', err));
   }
 });
