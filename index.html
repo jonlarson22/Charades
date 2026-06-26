@@ -10,55 +10,99 @@
 <body>
 
   <main class="app-container">
-    <header class="app-header setup-only">
-      <h1>Charades</h1>
-      <nav class="tabs">
-        <button class="tab-btn active" data-difficulty="easy">Easy</button>
-        <button class="tab-btn" data-difficulty="medium">Medium</button>
-        <button class="tab-btn" data-difficulty="hard">Hard</button>
-      </nav>
-      
-      <div class="timer-settings">
-        <label for="timeSlider">Timer: <span id="timeDisplay">60</span>s</label>
-        <input type="range" id="timeSlider" min="15" max="120" step="15" value="60">
+    
+    <section id="view-lobby" class="view active">
+      <header class="app-header">
+        <h1>Charades</h1>
+        <p class="subtitle">Select your family mode:</p>
+      </header>
 
-        <div class="lightning-toggle-container">
-            <label for="lightningToggle">⚡ Lightning Round</label>
-            <label class="switch">
-              <input type="checkbox" id="lightningToggle">
-              <span class="slider round"></span>
-            </label>
+      <div class="mode-select-grid">
+        <div class="mode-card selected" data-mode="toddler">
+          <div class="mode-info">
+            <h3>🐱 Toddler Mode</h3>
+            <p>Pictures only • No timer • Self-paced</p>
           </div>
-      </div>
-    </header>
+        </div>
 
-    <section class="card-stage">
-      <div class="flashcard">
-        <div class="card-content" id="cardContent">
-          <p class="placeholder-text">Tap "Next Card"<br>to begin!</p>
+        <div class="mode-card" data-mode="classic">
+          <div class="mode-info">
+            <h3>⭐ Classic Charades</h3>
+            <p>Text words • Timed rounds</p>
+          </div>
+        </div>
+
+        <div class="mode-card" data-mode="challenge">
+          <div class="mode-info">
+            <h3>⚡ Lightning Round</h3>
+            <p>Fast-paced • Scored • Skip/Correct rules</p>
+          </div>
         </div>
       </div>
-      <div class="progress-container">
-        <div class="progress-bar" id="progressBar"></div>
+
+      <div id="lobbyTimerContainer" class="timer-settings hidden">
+        <label for="timeSlider">Round Length: <span id="timeDisplay">60</span>s</label>
+        <input type="range" id="timeSlider" min="15" max="120" step="15" value="60">
       </div>
-            <div id="scoreDisplay" class="score-display hidden">
-        Score: <span id="scoreValue">0</span>
-      </div>
+
+      <footer class="app-footer">
+        <button id="startGameBtn" class="primary-btn">Start Game</button>
+      </footer>
     </section>
 
-    <footer class="app-footer">
-      <div class="action-buttons">
-        <button id="startTimerBtn" class="secondary-btn" disabled>Start Timer</button>
-        <button id="nextBtn" class="primary-btn">Next Card</button>
-        
-        <div id="lightningControls" class="lightning-controls hidden">
-            <button id="skipBtn" class="action-btn skip-btn">Skip</button>
-            <button id="correctBtn" class="action-btn correct-btn">Correct!</button>
+
+    <section id="view-stage" class="view">
+      <header class="stage-header">
+        <span id="stageModeTitle" class="badge">Mode</span>
+        <div id="scoreDisplay" class="score-badge hidden">Score: <span id="scoreValue">0</span></div>
+      </header>
+
+      <div class="card-stage">
+        <div class="flashcard">
+          <div class="card-content" id="cardContent">
+            </div>
         </div>
-        
-        <button id="cancelBtn" class="action-btn cancel-btn hidden">End Round</button>
+        <div class="progress-container">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
       </div>
-    </footer>
+
+      <footer class="app-footer">
+        <div id="controlsPreStart" class="control-group hidden">
+          <button id="startTimerBtn" class="secondary-btn">Start Timer</button>
+        </div>
+
+        <div id="controlsManual" class="control-group hidden">
+          <button id="nextCardBtn" class="primary-btn">Next Card</button>
+        </div>
+
+        <div id="controlsLightning" class="control-group lightning-controls hidden">
+          <button id="skipBtn" class="action-btn skip-btn">Skip</button>
+          <button id="correctBtn" class="action-btn correct-btn">Correct!</button>
+        </div>
+
+        <button id="exitStageBtn" class="cancel-btn">End Round Early</button>
+      </footer>
+    </section>
+
+
+    <section id="view-recap" class="view">
+      <div class="recap-stage">
+        <div class="recap-box">
+          <h2>⏰ Time's Up!</h2>
+          <div id="recapScoreContainer" class="recap-score hidden">
+            <p>Final Score</p>
+            <span id="recapScoreValue">0</span>
+          </div>
+        </div>
+      </div>
+
+      <footer class="app-footer recap-footer">
+        <button id="playAgainBtn" class="primary-btn">Play Again</button>
+        <button id="changeModeBtn" class="secondary-btn">Change Mode</button>
+      </footer>
+    </section>
+
   </main>
 
   <script src="app.js"></script>
