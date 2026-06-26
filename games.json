@@ -2,14 +2,12 @@
   "easy": {
     "totalImages": 62
   },
-  "medium": [
+  "words": [
     "Brushing Teeth",
     "Driving a Car",
     "Monkey",
     "Eating Spaghetti",
-    "Playing Guitar"
-  ],
-  "hard": [
+    "Playing Guitar",
     "Astronaut on the Moon",
     "Baking a Pizza",
     "Riding a Rollercoaster"
