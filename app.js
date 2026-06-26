@@ -27,11 +27,24 @@ const correctBtn = document.getElementById('correctBtn');
 const skipBtn = document.getElementById('skipBtn');
 const cancelBtn = document.getElementById('cancelBtn');
 
+// <-- NEW (Timer Fix): Helper function to fade the timer bar in and out safely
+function toggleTimerVisibility(show) {
+  const container = document.querySelector('.progress-container');
+  if (container) {
+    if (show) {
+      container.classList.add('active');
+    } else {
+      container.classList.remove('active');
+    }
+  }
+}
+
 cancelBtn.addEventListener('click', () => {
   clearInterval(timerInterval);
   clearTimeout(buzzerTimeout);
 
   document.body.classList.remove('game-active');
+  toggleTimerVisibility(false); // <-- NEW (Timer Fix): Hides bar when round is canceled
   
   // Reset UI back to default
   lightningControls.classList.add('hidden');
@@ -95,6 +108,7 @@ function startTimer() {
   clearTimeout(buzzerTimeout);  
 
   document.body.classList.add('game-active');
+  toggleTimerVisibility(true); // <-- NEW (Timer Fix): Shows bar when timer starts
   
   timeLeft = currentDuration;
   progressBar.style.width = '100%';
@@ -127,6 +141,7 @@ function startTimer() {
       buzzerTimeout = setTimeout(() => {
         playBuzzer();
         document.body.classList.remove('game-active');
+        toggleTimerVisibility(false); // <-- NEW (Timer Fix): Hides bar when time runs out
         
         // Reset UI completely after time runs out
         if (isLightningRound) {
@@ -171,6 +186,8 @@ function drawCard(keepTimerRunning = false) {
       clearInterval(timerInterval);
       clearTimeout(buzzerTimeout);
       document.body.classList.remove('game-active');
+      toggleTimerVisibility(false); // <-- NEW (Timer Fix): Hides bar on manual card draw
+      
       progressBar.style.width = '100%';
       progressBar.classList.remove('warning');
       
@@ -199,6 +216,8 @@ tabs.forEach(tab => {
       cardContent.classList.remove('fade-out');
       clearInterval(timerInterval); // Stop timer on tab switch
       clearTimeout(buzzerTimeout);
+      toggleTimerVisibility(false); // <-- NEW (Timer Fix): Hides bar if they switch tabs mid-game
+      
       progressBar.style.width = '100%';
       progressBar.classList.remove('warning');
 
@@ -212,6 +231,8 @@ timeSlider.addEventListener('input', (e) => {
   timeDisplay.textContent = currentDuration;
   clearInterval(timerInterval); // Stop active timer if they change the slider
   clearTimeout(buzzerTimeout);
+  toggleTimerVisibility(false); // <-- NEW (Timer Fix): Hides bar if they adjust time mid-game
+  
   progressBar.style.width = '100%';
   progressBar.classList.remove('warning');
 
