@@ -9,13 +9,13 @@ const GAME_MODES = {
     isScored: false
   },
   classic: {
-    dataKey: 'medium',
+    dataKey: 'words',
     title: '⭐ Classic Charades',
     useTimer: true,
     isScored: false
   },
   challenge: {
-    dataKey: 'hard',
+    dataKey: 'words',
     title: '⚡ Lightning Round',
     useTimer: true,
     isScored: true
@@ -23,7 +23,7 @@ const GAME_MODES = {
 };
 
 let gameData = null;
-let shuffledBags = { easy: [], medium: [], hard: [] };
+let shuffledBags = { easy: [], words: [] };
 let currentModeKey = 'toddler';
 let currentDuration = 60;
 let timeLeft = 60;
@@ -95,7 +95,7 @@ function shuffleArray(array) {
 function getNextCard() {
   const dataKey = GAME_MODES[currentModeKey].dataKey;
   
-  if (shuffledBags[dataKey].length === 0) {
+  if (!shuffledBags[dataKey] || shuffledBags[dataKey].length === 0) {
     if (dataKey === 'easy') {
       shuffledBags.easy = Array.from({ length: gameData.easy.totalImages }, (_, i) => i + 1);
     } else {
@@ -150,14 +150,12 @@ function initStage() {
   const config = GAME_MODES[currentModeKey];
   stageModeTitle.textContent = config.title;
   
-  // Stop any lingering background timers safely
   clearInterval(timerInterval);
   clearTimeout(buzzerTimeout);
   progressContainer.classList.remove('active');
   progressBar.style.width = '100%';
   progressBar.classList.remove('warning');
 
-  // Configure Score Badge
   currentScore = 0;
   scoreValue.textContent = '0';
   if (config.isScored) {
@@ -166,20 +164,16 @@ function initStage() {
     scoreDisplay.classList.add('hidden');
   }
 
-  // Hide all dynamic footer controls initially
   controlsPreStart.classList.add('hidden');
   controlsManual.classList.add('hidden');
   controlsLightning.classList.add('hidden');
 
   drawCard();
 
-  // Branch UI layout based on mode rules
   if (!config.useTimer) {
-    // Toddler Mode: Immediate access to Next Card
     controlsManual.classList.remove('hidden');
     exitStageBtn.textContent = 'Back to Menu';
   } else {
-    // Classic & Challenge: Prompt user to start the clock
     controlsPreStart.classList.remove('hidden');
     exitStageBtn.textContent = 'End Round Early';
   }
